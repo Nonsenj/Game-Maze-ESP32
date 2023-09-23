@@ -84,6 +84,10 @@ bool gamePause = true;
 int8_t illuminatedRow = 0;
 int8_t wallPhase = 1;
 
+const int JoyStick_pin = 2;
+const int X_pin = A1;
+const int Y_pin = A0;
+
 
 
 void displayWIFI(uint8_t font) {
@@ -168,6 +172,7 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
+  pinMode(JoyStick_pin, INPUT_PULLUP);
   display.begin(SH1106_SWITCHCAPVCC, 0x3C);
   //display.begin(SH1106_SWITCHCAPVCC, 0x78);
   display.clearDisplay();
@@ -192,6 +197,10 @@ void loop() {
   if(gameMode == 1){
     Game();
     controller();
+  }
+
+  if(gameMode == 2){
+    setting();
   }
 
   displayBattery(WHITE);

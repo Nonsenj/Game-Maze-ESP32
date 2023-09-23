@@ -1,7 +1,3 @@
-const int JoyStick_pin = 2;
-const int X_pin = A1;
-const int Y_pin = A0;
-
 uint8_t Player_x = 64;
 uint8_t Player_y = 32;
 char state = 'S';
@@ -15,8 +11,8 @@ void ReadJoy() {
   x = analogRead(X_pin);
   y = analogRead(Y_pin);
 
-  readX = map(x, 0, 1023, 0, 2);
-  readY = map(y, 0, 1023, 0, 2);
+  readX = map(x, 0, 1023, 0, 3);
+  readY = map(y, 0, 1023, 0, 3);
 
   if (readX != 1 || readY != 1) {
     if (readY == 0) {
@@ -51,7 +47,7 @@ bool Deboundce(int Pin) {
 
 
 void controller() {
-  if ((millis() - prevTimeButton) > 50) {
+  if ((millis() - prevTimeButton) > 200) {
     prevTimeButton = millis();
     ReadJoy();
   }
@@ -75,12 +71,11 @@ void controller() {
       delay(30);
     }
 
-    if (Deboundce(ButtonA)) {
-        gameMode = selectedOption;
-        gamePause = false;
-        generateMaze();
-      }
-
+    // if (Deboundce(ButtonA) or Deboundce(JoyStick_pin)) {
+    //   gameMode = selectedOption;
+    //   gamePause = false;
+    //   generateMaze();
+    // }
   } else {
     Serial.println(state);
     if (state == 'L') {
