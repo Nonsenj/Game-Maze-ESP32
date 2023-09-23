@@ -70,11 +70,19 @@ const unsigned char Title[] PROGMEM = {
 };
 
 #define ACTIVATED LOW
+#define MAZEHEIGHT 31
+#define MAZEWIDTH 15
+#define ButtonA 4
+
 int selectedOption = 1;
 bool sound_enabled = true;
 unsigned long prevTimeblink = 0;
 int gameMode = 0;
-
+int8_t posx=0, posy=2;
+int8_t blinkPlayer=1;
+bool gamePause = true;
+int8_t illuminatedRow = 0;
+int8_t wallPhase = 1;
 
 
 
@@ -141,6 +149,20 @@ void sound_tone(uint8_t pin, int freq, int duration) {
   if (sound_enabled) {
     tone(pin, freq, duration);
   }
+}
+
+int readVcc() {
+  int result;  // Read 1.1V reference against AVcc
+  ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
+  delay(2);             // Wait for Vref to settle
+  ADCSRA |= _BV(ADSC);  // Convert
+  while (bit_is_set(ADCSRA, ADSC))
+    ;
+  result = ADCL;
+  result |= ADCH << 8;
+  result = 1126400L / result;
+  // Back-calculate AVcc in mV
+  return result;
 }
 
 

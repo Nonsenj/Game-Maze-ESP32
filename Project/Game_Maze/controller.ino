@@ -7,6 +7,7 @@ uint8_t Player_y = 32;
 char state = 'S';
 unsigned long prevTimeButton = 0;
 unsigned long prevTimeDeboundce = 0;
+bool wall;
 
 
 void ReadJoy() {
@@ -16,11 +17,6 @@ void ReadJoy() {
 
   readX = map(x, 0, 1023, 0, 2);
   readY = map(y, 0, 1023, 0, 2);
-
-  // Serial.print(readX);
-  // Serial.print(" , ");
-  // Serial.print(readY);
-  // Serial.println();
 
   if (readX != 1 || readY != 1) {
     if (readY == 0) {
@@ -43,7 +39,7 @@ bool Deboundce(int Pin) {
     return false;
   } else {
     current_time = millis();
-    if ((current_time - prevTimeDeboundce) > 25) {
+    if ((current_time - prevTimeDeboundce) > 1000) {
       prevTimeDeboundce = millis();
       return true;
     } else {
@@ -53,38 +49,81 @@ bool Deboundce(int Pin) {
   }
 }
 
+
 void controller() {
-  if ((millis() - prevTimeButton) > 500) {
+  if ((millis() - prevTimeButton) > 50) {
     prevTimeButton = millis();
     ReadJoy();
   }
 
-  // if(state != 'S'){
-  //   Serial.println(state);
-  // }
-
-  if (state == 'D') {
-    selectedOption++;
-    if (selectedOption > 2) {
-      selectedOption = 1;
+  if (gamePause) {
+    if (state == 'D') {
+      selectedOption++;
+      if (selectedOption > 2) {
+        selectedOption = 1;
+      }
+      state = 'S';
+      delay(30);
     }
 
-    state = 'S';
-
-  }
-
-  if (state == 'U') {
-    selectedOption--;
-    if (selectedOption < 1) {
-      selectedOption = 2;
+    if (state == 'U') {
+      selectedOption--;
+      if (selectedOption < 1) {
+        selectedOption = 2;
+      }
+      state = 'S';
+      delay(30);
     }
 
-    state = 'S';
-  }
+    if (Deboundce(ButtonA)) {
+        gameMode = selectedOption;
+        gamePause = false;
+        generateMaze();
+      }
 
-  if(Deboundce(4)){
-    gameMode = selectedOption;
-  }
+  } else {
+    Serial.println(state);
+    if (state == 'L') {
+      if (posx - 1 >= 0) {
+        wall = readPixel(posx - 1, posy);
+        if (!wall) {
+          --posx;
+        }
+      }
 
-  // Serial.println(selectedOption);
+      state = 'S';
+    }
+
+    if (state == 'R') {
+      if (posx + 1 <= MAZEHEIGHT + 1) {
+        wall = readPixel(posx + 1, posy);
+        if (!wall) {
+          ++posx;
+        }
+      }
+
+      state = 'S';
+    }
+
+    if (state == 'U') {
+      if (posy - 1 >= 2) {
+        wall = readPixel(posx, posy - 1);
+        if (!wall) {
+          --posy;
+        }
+      }
+
+      state = 'S';
+    }
+
+    if (state == 'D') {
+      if (posy + 1 <= MAZEWIDTH) {
+        wall = readPixel(posx, posy + 1);
+        if (!wall) {
+          ++posy;
+        }
+        state = 'S';
+      }
+    }
+  }
 }
