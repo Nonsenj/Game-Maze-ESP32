@@ -11,8 +11,8 @@ void ReadJoy() {
   x = analogRead(X_pin);
   y = analogRead(Y_pin);
 
-  readX = map(x, 0, 1023, 0, 3);
-  readY = map(y, 0, 1023, 0, 3);
+  readX = map(x, 0, 4096, 0, 3);
+  readY = map(y, 0, 4096, 0, 3);
 
   if (readX != 1 || readY != 1) {
     if (readY == 0) {
@@ -77,7 +77,7 @@ void controller() {
     //   generateMaze();
     // }
   } else {
-    Serial.println(state);
+    // Serial.println(state);
     if (state == 'L') {
       if (posx - 1 >= 0) {
         wall = readPixel(posx - 1, posy);

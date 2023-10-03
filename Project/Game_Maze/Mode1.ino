@@ -15,7 +15,7 @@ void Game() {
     blinkPlayer = 1;
     wallPhase = 1;
     selectedOption = 1;
-    asm volatile("  jmp 0");
+    ESP.restart(); //jmp 0 
   } else {
     drawMaze();
     if (gamePause) {
@@ -25,7 +25,7 @@ void Game() {
           gamePause = false;
         }
         if(selectedOption == 2){
-          asm volatile ("  jmp 0");
+          ESP.restart(); //jmp 0 
         }
       }
     }

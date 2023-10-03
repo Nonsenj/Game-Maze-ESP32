@@ -1,9 +1,13 @@
+#include <SPI.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
 
-#define OLED_RESET 1
-Adafruit_SH1106 display(OLED_RESET);
+
+#define OLED_SDA 21
+#define OLED_SCL 22
+
+Adafruit_SH1106 display(OLED_SDA, OLED_SCL);
 
 // '368253026_817568569838035_167469562880917573_n', 125x60px
 const unsigned char Title[] PROGMEM = {
@@ -84,9 +88,9 @@ bool gamePause = true;
 int8_t illuminatedRow = 0;
 int8_t wallPhase = 1;
 
-const int JoyStick_pin = 2;
-const int X_pin = A1;
-const int Y_pin = A0;
+const int JoyStick_pin = 25;
+const int X_pin = 32;
+const int Y_pin = 33;
 
 
 
@@ -156,23 +160,17 @@ void sound_tone(uint8_t pin, int freq, int duration) {
 }
 
 int readVcc() {
-  int result;  // Read 1.1V reference against AVcc
-  ADMUX = _BV(REFS0) | _BV(MUX3) | _BV(MUX2) | _BV(MUX1);
-  delay(2);             // Wait for Vref to settle
-  ADCSRA |= _BV(ADSC);  // Convert
-  while (bit_is_set(ADCSRA, ADSC))
-    ;
-  result = ADCL;
-  result |= ADCH << 8;
-  result = 1126400L / result;
-  // Back-calculate AVcc in mV
+  float result;  // Read 1.1V reference against AVcc
+  result = analogRead(25);
   return result;
 }
 
 
 void setup() {
   Serial.begin(9600);
+  Serial.println(gameMode);
   pinMode(JoyStick_pin, INPUT_PULLUP);
+  pinMode(ButtonA, INPUT_PULLUP);
   display.begin(SH1106_SWITCHCAPVCC, 0x3C);
   //display.begin(SH1106_SWITCHCAPVCC, 0x78);
   display.clearDisplay();

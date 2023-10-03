@@ -107,6 +107,4 @@ void setting(){
   // display.print("12:00");
   // display.setTextSize(1);
 
-  
-
 }
