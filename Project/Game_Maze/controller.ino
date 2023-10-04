@@ -51,6 +51,7 @@ void controller() {
     prevTimeButton = millis();
     ReadJoy();
   }
+  // Serial.println(state);
 
   if (gamePause) {
     if (state == 'D') {
@@ -71,13 +72,8 @@ void controller() {
       delay(30);
     }
 
-    // if (Deboundce(ButtonA) or Deboundce(JoyStick_pin)) {
-    //   gameMode = selectedOption;
-    //   gamePause = false;
-    //   generateMaze();
-    // }
+
   } else {
-    // Serial.println(state);
     if (state == 'L') {
       if (posx - 1 >= 0) {
         wall = readPixel(posx - 1, posy);

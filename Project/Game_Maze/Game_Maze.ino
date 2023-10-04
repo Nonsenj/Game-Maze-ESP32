@@ -76,7 +76,9 @@ const unsigned char Title[] PROGMEM = {
 #define ACTIVATED LOW
 #define MAZEHEIGHT 31
 #define MAZEWIDTH 15
-#define ButtonA 4
+#define ButtonA 26
+#define ButtonB 27
+#define ButtonM 14
 
 int selectedOption = 1;
 bool sound_enabled = true;
@@ -87,12 +89,25 @@ int8_t blinkPlayer=1;
 bool gamePause = true;
 int8_t illuminatedRow = 0;
 int8_t wallPhase = 1;
+int8_t level=1;
 
 const int JoyStick_pin = 25;
 const int X_pin = 32;
 const int Y_pin = 33;
 
+hw_timer_t *My_timer = NULL;
+uint8_t minute = 0;
+uint8_t second = 0;
+bool timerOn = false;
 
+void IRAM_ATTR onTimer() {
+  if (second == 60) {
+    second = 0;
+    minute++;
+  } else {
+    second++;
+  }
+}
 
 void displayWIFI(uint8_t font) {
   display.drawLine(91, 1, 91, 5, font);
@@ -168,14 +183,17 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
-  Serial.println(gameMode);
+  My_timer = timerBegin(0, 80, true);
+  timerAttachInterrupt(My_timer, &onTimer, true);
+  timerAlarmWrite(My_timer, 1000000, true);
   pinMode(JoyStick_pin, INPUT_PULLUP);
   pinMode(ButtonA, INPUT_PULLUP);
+  pinMode(ButtonB, INPUT_PULLUP);
+  pinMode(ButtonM, INPUT_PULLUP);
   display.begin(SH1106_SWITCHCAPVCC, 0x3C);
-  //display.begin(SH1106_SWITCHCAPVCC, 0x78);
   display.clearDisplay();
-  display.display();
 
+  display.display();
   display.clearDisplay();
 
   display.drawBitmap(0, 10, Title, 128, 64, WHITE);
@@ -203,7 +221,7 @@ void loop() {
 
   displayBattery(WHITE);
   displayIndicators(WHITE);
-  displayWIFI(WHITE);
+  // displayWIFI(WHITE);
 
   display.display();
 }
