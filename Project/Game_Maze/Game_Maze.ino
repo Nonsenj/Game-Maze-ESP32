@@ -100,6 +100,8 @@ uint8_t minute = 0;
 uint8_t second = 0;
 bool timerOn = false;
 
+int score;
+
 void IRAM_ATTR onTimer() {
   if (second == 60) {
     second = 0;
