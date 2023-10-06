@@ -80,30 +80,35 @@ const unsigned char Title[] PROGMEM = {
 #define ButtonB 27
 #define ButtonM 14
 
+
 int selectedOption = 1;
 bool sound_enabled = true;
+
 unsigned long prevTimeblink = 0;
-int gameMode = 0;
-int8_t posx=0, posy=2;
+unsigned long prevTimeSleep = 0;
+
+RTC_DATA_ATTR int gameMode = 0;
+RTC_DATA_ATTR int8_t posx=0, posy=2;
 int8_t blinkPlayer=1;
-bool gamePause = true;
+RTC_DATA_ATTR bool gamePause = true;
+
 int8_t illuminatedRow = 0;
 int8_t wallPhase = 1;
-int8_t level=1;
+RTC_DATA_ATTR int8_t level=1;
 
 const int JoyStick_pin = 25;
 const int X_pin = 32;
 const int Y_pin = 33;
 
 hw_timer_t *My_timer = NULL;
-uint8_t minute = 0;
-uint8_t second = 0;
-bool timerOn = false;
+RTC_DATA_ATTR uint8_t minute = 0;
+RTC_DATA_ATTR uint8_t second = 0;
+RTC_DATA_ATTR bool timerOn = false;
 
 int score;
 
 void IRAM_ATTR onTimer() {
-  if (second == 60) {
+  if (second == 59) {
     second = 0;
     minute++;
   } else {
@@ -117,6 +122,11 @@ void displayWIFI(uint8_t font) {
   display.drawLine(90, 3, 90, 6, font);
   display.drawLine(89, 1, 89, 5, font);
 }
+
+void displayClock(uint8_t font) {
+  
+}
+
 void displayIndicators(uint8_t font) {
   //speaker
   display.drawLine(103, 1, 103, 6, font);
@@ -192,6 +202,7 @@ void setup() {
   pinMode(ButtonA, INPUT_PULLUP);
   pinMode(ButtonB, INPUT_PULLUP);
   pinMode(ButtonM, INPUT_PULLUP);
+  esp_sleep_enable_ext0_wakeup(GPIO_NUM_14, 0);
   display.begin(SH1106_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
 
@@ -206,6 +217,7 @@ void setup() {
 }
 
 void loop() {
+  Serial.println(score);
   display.clearDisplay();
   if (gameMode == 0) {
     mainMenu();
@@ -219,6 +231,7 @@ void loop() {
 
   if(gameMode == 2){
     setting();
+    controller();
   }
 
   displayBattery(WHITE);
@@ -226,4 +239,13 @@ void loop() {
   // displayWIFI(WHITE);
 
   display.display();
+
+  if ((millis()- prevTimeSleep) > 60000 && gamePause) {
+    prevTimeSleep = millis();
+    timerDetachInterrupt(My_timer);
+    Serial.println("Going to sleep now");
+    display.clearDisplay();
+    display.display();
+    esp_deep_sleep_start();
+  }
 }

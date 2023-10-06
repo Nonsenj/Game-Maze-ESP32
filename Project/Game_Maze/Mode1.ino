@@ -46,6 +46,7 @@ void Game() {
   }
 
   if (!gamePause) {
+    prevTimeSleep = millis();
     if (!timerOn) {
       timerAlarmEnable(My_timer);
       timerOn = true;

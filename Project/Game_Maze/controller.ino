@@ -54,6 +54,10 @@ void controller() {
   // Serial.println(state);
 
   if (gamePause) {
+    if (state == 'D' || state == 'U' || state == 'L' || state == 'R') {
+      prevTimeSleep = millis();
+    }
+    
     if (state == 'D') {
       selectedOption++;
       if (selectedOption > 2) {

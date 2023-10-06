@@ -7,9 +7,9 @@ void cursor_Blink(int x, int y) {
     sec = !sec;
   }
 
-  if(sec == 1){
+  if (sec == 1) {
     font = BLACK;
-  }else{
+  } else {
     font = WHITE;
   }
 
@@ -23,18 +23,18 @@ void cursor_Blink(int x, int y) {
 void mainMenu() {
 
   if (selectedOption == 1) {
-    cursor_Blink(35,32);
+    cursor_Blink(35, 32);
     display.setCursor(50, 32);
-  }else{
+  } else {
     display.setCursor(35, 32);
   }
   display.print("Start");
   display.setTextSize(1);
 
-  if (selectedOption == 2){
-    cursor_Blink(35,44);
+  if (selectedOption == 2) {
+    cursor_Blink(35, 44);
     display.setCursor(47, 44);
-  }else{
+  } else {
     display.setCursor(35, 44);
   }
 
@@ -43,9 +43,12 @@ void mainMenu() {
 
   if (Deboundce(ButtonA) or Deboundce(JoyStick_pin)) {
     gameMode = selectedOption;
-    gamePause = false;
-    generateMaze();
+    if (gameMode == 1) {
+      gamePause = false;
+      generateMaze();
+    }
   }
+  
 }
 
 void gameMenu() {
@@ -60,18 +63,18 @@ void gameMenu() {
 
   display.setCursor(48, 24);
   display.print("resume");
-  if(selectedOption == 1){
-    cursor_Blink(33,24);
+  if (selectedOption == 1) {
+    cursor_Blink(33, 24);
   }
 
   display.setCursor(48, 34);
   display.print("quit");
-  if(selectedOption == 2){
-    cursor_Blink(33,34);
+  if (selectedOption == 2) {
+    cursor_Blink(33, 34);
   }
 }
 
-void setting(){
+void setting() {
   display.fillRect(10, 9, 108, 10, WHITE);
   display.drawRect(10, 18, 108, 46, WHITE);
   display.setTextColor(BLACK);
@@ -106,5 +109,4 @@ void setting(){
   // display.setCursor(70, 50);
   // display.print("12:00");
   // display.setTextSize(1);
-
 }

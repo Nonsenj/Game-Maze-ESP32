@@ -1,7 +1,7 @@
 uint8_t geni, genj, genk, genval, genmod;
 int8_t genx, geny;
 
-uint16_t Maze[] = {
+RTC_DATA_ATTR uint16_t Maze[] = {
   0b1101111111111111,
   0b1100000000000001,
   0b1101010101010101,
