@@ -134,7 +134,8 @@ void generateMaze() {
       Maze[geni] |= (0x8000 >> genj);
 
       do {
-        randomSeed(11);
+        DateTime rannow = rtc.now();
+        randomSeed(analogRead(12));
         genval = (uint8_t)(random(10000) & 0x00FF) % genmod;
         genx = 0, geny = 0;
         if (genval == 0) geny = 1;   //right

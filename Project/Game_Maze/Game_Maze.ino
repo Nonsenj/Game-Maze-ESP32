@@ -2,6 +2,8 @@
 #include <Wire.h>
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
+#include <RTClib.h>
+#include "DHT.h"
 
 
 #define OLED_SDA 21
@@ -80,6 +82,14 @@ const unsigned char Title[] PROGMEM = {
 #define ButtonB 27
 #define ButtonM 14
 
+#define DHTPIN 4
+#define DHTTYPE DHT11
+DHT dht(DHTPIN, DHTTYPE) ;
+
+float h = dht.readHumidity();
+float t = dht.readTemperature();
+float f = dht.readTemperature(true);
+
 
 int selectedOption = 1;
 bool sound_enabled = true;
@@ -104,6 +114,7 @@ hw_timer_t *My_timer = NULL;
 RTC_DATA_ATTR uint8_t minute = 0;
 RTC_DATA_ATTR uint8_t second = 0;
 RTC_DATA_ATTR bool timerOn = false;
+RTC_DS1307 rtc;
 
 int score;
 
@@ -124,8 +135,21 @@ void displayWIFI(uint8_t font) {
 }
 
 void displayClock(uint8_t font) {
-  
+  DateTime now = rtc.now();
+  display.setCursor(0, 2);
+  display.setTextColor(font);
+  display.setTextSize(1);
+  display.print(now.hour());
+  display.print(":");
+  display.print(now.minute());
 }
+
+void readHTF(){
+  h = dht.readHumidity();
+  t = dht.readTemperature();
+  f = dht.readTemperature(true);
+}
+
 
 void displayIndicators(uint8_t font) {
   //speaker
@@ -195,6 +219,11 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
+  if (! rtc.begin()) {
+    Serial.println("RTC module is NOT found");
+    Serial.flush();
+    while (1);
+  }
   My_timer = timerBegin(0, 80, true);
   timerAttachInterrupt(My_timer, &onTimer, true);
   timerAlarmWrite(My_timer, 1000000, true);
@@ -217,11 +246,12 @@ void setup() {
 }
 
 void loop() {
-  Serial.println(score);
+  readHTF();
   display.clearDisplay();
   if (gameMode == 0) {
     mainMenu();
     controller();
+    displayClock(WHITE);
   }
 
   if(gameMode == 1){

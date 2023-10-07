@@ -19,7 +19,7 @@ void Game() {
   if (posx == MAZEHEIGHT + 1) {
     timerAlarmDisable(My_timer);
     timerOn = false;
-    score = 10000 - ((minute * 39) + (second * 0.65));
+    score = 100 - ((minute * 20) + (second * 0.2));
     level++;
     displayLevel();
     minute = 0;
