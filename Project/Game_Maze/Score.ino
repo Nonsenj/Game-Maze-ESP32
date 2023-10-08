@@ -92,11 +92,11 @@ void displayLevel() {
     display.setTextSize(1);
     display.print("SCORE");
 
-    display.setCursor(50, 35);
+    display.setCursor(57, 35);
     display.setTextColor(WHITE);
     display.setTextSize(2);
     randomSeed(analogRead(34));
-    Randomscore = random(10000);
+    Randomscore = random(100);
     display.print(Randomscore);
     display.display();
     delay(500);
@@ -109,7 +109,7 @@ void displayLevel() {
     display.setTextSize(1);
     display.print("SCORE");
 
-    display.setCursor(50, 35);
+    display.setCursor(57, 35);
     display.setTextColor(WHITE);
     display.setTextSize(2);
     display.print(score);
@@ -126,8 +126,8 @@ void displayLevel() {
     
     Bigstar(99+i, 35-i, font);
     bitstar(103+i, 42-i, (font == WHITE) ? font = BLACK:font = WHITE);
-    Bigstar(45-i, 43+i, font);
-    bitstar(41-i, 42+i, (font == WHITE) ? font = BLACK:font = WHITE);
+    Bigstar(52-i, 43+i, font);
+    bitstar(48-i, 42+i, (font == WHITE) ? font = BLACK:font = WHITE);
     display.display();
     delay(24);
   }

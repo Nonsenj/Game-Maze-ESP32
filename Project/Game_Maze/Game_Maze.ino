@@ -84,7 +84,7 @@ const unsigned char Title[] PROGMEM = {
 
 #define DHTPIN 4
 #define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE) ;
+DHT dht(DHTPIN, DHTTYPE);
 
 float h = dht.readHumidity();
 float t = dht.readTemperature();
@@ -92,19 +92,22 @@ float f = dht.readTemperature(true);
 
 
 int selectedOption = 1;
+int Modegame = 2;
 bool sound_enabled = true;
 
 unsigned long prevTimeblink = 0;
 unsigned long prevTimeSleep = 0;
+unsigned long prevSetCursor = 0;
 
 RTC_DATA_ATTR int gameMode = 0;
-RTC_DATA_ATTR int8_t posx=0, posy=2;
-int8_t blinkPlayer=1;
+RTC_DATA_ATTR int8_t posx = 0, posy = 2;
+int8_t blinkPlayer = 1;
 RTC_DATA_ATTR bool gamePause = true;
+RTC_DATA_ATTR bool setOn = false;
 
 int8_t illuminatedRow = 0;
 int8_t wallPhase = 1;
-RTC_DATA_ATTR int8_t level=1;
+RTC_DATA_ATTR int8_t level = 1;
 
 const int JoyStick_pin = 25;
 const int X_pin = 32;
@@ -117,6 +120,7 @@ RTC_DATA_ATTR bool timerOn = false;
 RTC_DS1307 rtc;
 
 int score;
+bool setSelect = false;
 
 void IRAM_ATTR onTimer() {
   if (second == 59) {
@@ -144,7 +148,7 @@ void displayClock(uint8_t font) {
   display.print(now.minute());
 }
 
-void readHTF(){
+void readHTF() {
   h = dht.readHumidity();
   t = dht.readTemperature();
   f = dht.readTemperature(true);
@@ -219,10 +223,11 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
-  if (! rtc.begin()) {
+  if (!rtc.begin()) {
     Serial.println("RTC module is NOT found");
     Serial.flush();
-    while (1);
+    while (1)
+      ;
   }
   My_timer = timerBegin(0, 80, true);
   timerAttachInterrupt(My_timer, &onTimer, true);
@@ -246,6 +251,7 @@ void setup() {
 }
 
 void loop() {
+  // Serial.println(selectedOption);
   readHTF();
   display.clearDisplay();
   if (gameMode == 0) {
@@ -254,23 +260,25 @@ void loop() {
     displayClock(WHITE);
   }
 
-  if(gameMode == 1){
+  if (gameMode == 1) {
     Game();
     controller();
   }
 
-  if(gameMode == 2){
+  if (gameMode == 2) {
     setting();
     controller();
   }
 
-  displayBattery(WHITE);
-  displayIndicators(WHITE);
+  if(!gameMode) {
+    displayBattery(WHITE);
+    displayIndicators(WHITE);
+  }
   // displayWIFI(WHITE);
 
   display.display();
 
-  if ((millis()- prevTimeSleep) > 60000 && gamePause) {
+  if ((millis() - prevTimeSleep) > 60000 && gamePause) {
     prevTimeSleep = millis();
     timerDetachInterrupt(My_timer);
     Serial.println("Going to sleep now");
