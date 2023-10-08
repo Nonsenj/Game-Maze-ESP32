@@ -19,7 +19,7 @@ void Game() {
   if (posx == MAZEHEIGHT + 1) {
     timerAlarmDisable(My_timer);
     timerOn = false;
-    score = 100 - ((minute * 20) + (second * 0.2));
+    score = 100 - ((minute * 20) + (second * 0.5));
     level++;
     displayLevel();
     minute = 0;
@@ -39,7 +39,10 @@ void Game() {
           gamePause = false;
         }
         if (selectedOption == 2) {
-          ESP.restart();  //jmp 0
+          // ESP.restart();  //jmp 0
+          gamePause = true;
+          gameMode = 0;
+          selectedOption = 1;
         }
       }
     }
