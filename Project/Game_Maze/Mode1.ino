@@ -20,6 +20,7 @@ void Game() {
     timerAlarmDisable(My_timer);
     timerOn = false;
     score = 100 - ((minute * 20) + (second * 0.5));
+    totalScore += score;
     level++;
     displayLevel();
     minute = 0;
@@ -43,6 +44,9 @@ void Game() {
           gamePause = true;
           gameMode = 0;
           selectedOption = 1;
+          preferences.begin("Savegame", false);
+          preferences.putUInt("totalScore",totalScore);
+          preferences.end();
         }
       }
     }

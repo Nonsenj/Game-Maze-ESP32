@@ -3,6 +3,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
 #include <RTClib.h>
+#include <Preferences.h>
 #include "DHT.h"
 
 
@@ -75,6 +76,7 @@ const unsigned char Title[] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+Preferences preferences;
 #define ACTIVATED LOW
 #define MAZEHEIGHT 31
 #define MAZEWIDTH 15
@@ -92,7 +94,7 @@ float f = dht.readTemperature(true);
 
 
 int selectedOption = 1;
-int Modegame = 2;
+int Modegame;
 bool sound_enabled = true;
 
 unsigned long prevTimeblink = 0;
@@ -119,8 +121,10 @@ RTC_DATA_ATTR uint8_t second = 0;
 RTC_DATA_ATTR bool timerOn = false;
 RTC_DS1307 rtc;
 
-int score;
+RTC_DATA_ATTR int score;
+RTC_DATA_ATTR int totalScore;
 bool setSelect = false;
+String NameID;
 
 void IRAM_ATTR onTimer() {
   if (second == 59) {
@@ -129,6 +133,14 @@ void IRAM_ATTR onTimer() {
   } else {
     second++;
   }
+}
+
+void ReadEEprom(){
+  preferences.begin("Savegame", false);
+  totalScore = preferences.getUInt("totalScore",0);
+  Modegame = preferences.getUInt("modegame",1);
+  NameID = preferences.getString("username","NONE");
+  preferences.end();
 }
 
 void displayWIFI(uint8_t font) {
@@ -248,10 +260,22 @@ void setup() {
   delay(3000);
 
   display.clearDisplay();
+  
+//  preferences.begin("Savegame", false);
+//  preferences.putUInt("totalScore",totalScore);
+//  preferences.putUInt("modegame",Modegame);
+//  preferences.putString("username",NameID);
+//  preferences.end();
+  ReadEEprom();
 }
 
 void loop() {
-  // Serial.println(selectedOption);
+  Serial.print("totalScore: ");
+  Serial.print(totalScore);
+  Serial.print("Modegame: ");
+  Serial.print(Modegame);
+  Serial.print("NameID: ");
+  Serial.println(NameID);
   readHTF();
   display.clearDisplay();
   if (gameMode == 0) {
