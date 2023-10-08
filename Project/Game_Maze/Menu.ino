@@ -91,8 +91,6 @@ void gameMenu() {
 }
 
 void setting() {
-  if(Deboundce(ButtonA)){setSelect = ~setSelect;}
-
   display.fillRect(10, 0, 107, 10, WHITE);
   display.drawRect(10, 10, 107, 53, WHITE);
   display.setTextColor(BLACK);
