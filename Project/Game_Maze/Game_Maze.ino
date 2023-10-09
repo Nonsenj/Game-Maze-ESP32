@@ -97,6 +97,13 @@ Preferences preferences;
 #define DHTPIN 4
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
+<<<<<<< HEAD
+=======
+
+float h = dht.readHumidity();
+float t = dht.readTemperature();
+float f = dht.readTemperature(true);
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
 
 float h;
 float t;
@@ -144,6 +151,7 @@ void IRAM_ATTR onTimer() {
   }
 }
 
+<<<<<<< HEAD
 void ReadDH11() {
   h = dht.readHumidity();
   t = dht.readTemperature();
@@ -155,6 +163,13 @@ void ReadEEprom() {
   totalScore = preferences.getUInt("totalScore", 0);
   Modegame = preferences.getUInt("modegame", 1);
   NameID = preferences.getString("username", "NONE");
+=======
+void ReadEEprom(){
+  preferences.begin("Savegame", false);
+  totalScore = preferences.getUInt("totalScore",0);
+  Modegame = preferences.getUInt("modegame",1);
+  NameID = preferences.getString("username","NONE");
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   preferences.end();
 }
 
@@ -250,7 +265,10 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
+<<<<<<< HEAD
   WiFi.begin(ssid, password);
+=======
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   if (!rtc.begin()) {
     Serial.println("RTC module is NOT found");
     Serial.flush();
@@ -276,16 +294,26 @@ void setup() {
   delay(3000);
 
   display.clearDisplay();
+<<<<<<< HEAD
 
   //  preferences.begin("Savegame", false);
   //  preferences.putUInt("totalScore",totalScore);
   //  preferences.putUInt("modegame",Mod egame);
   //  preferences.putString("username",NameID);
   //  preferences.end();
+=======
+  
+//  preferences.begin("Savegame", false);
+//  preferences.putUInt("totalScore",totalScore);
+//  preferences.putUInt("modegame",Modegame);
+//  preferences.putString("username",NameID);
+//  preferences.end();
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   ReadEEprom();
 }
 
 void loop() {
+<<<<<<< HEAD
   // Serial.print("totalScore: ");
   // Serial.print(totalScore);
   // Serial.print("Modegame: ");
@@ -339,6 +367,14 @@ void loop() {
   //   Serial.println("WiFi Disconnected");
   // }
 
+=======
+  Serial.print("totalScore: ");
+  Serial.print(totalScore);
+  Serial.print("Modegame: ");
+  Serial.print(Modegame);
+  Serial.print("NameID: ");
+  Serial.println(NameID);
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   readHTF();
   display.clearDisplay();
   if (gameMode == 0) {
@@ -357,7 +393,11 @@ void loop() {
     controller();
   }
 
+<<<<<<< HEAD
   if (!gameMode) {
+=======
+  if(!gameMode) {
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
     displayBattery(WHITE);
     displayIndicators(WHITE);
   }

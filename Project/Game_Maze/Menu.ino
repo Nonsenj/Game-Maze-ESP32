@@ -1,5 +1,10 @@
 bool sec = false;
+<<<<<<< HEAD
 bool ShowStatus = false;
+=======
+bool setstateone = true;
+bool setstatetwo = false;
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
 int i;
 
 void sercorTriangleDown(uint8_t x, uint8_t y) {
@@ -110,6 +115,7 @@ void mainMenu() {
     }
 
     selectedOption = 1;
+<<<<<<< HEAD
   }
 
   if(Deboundce(ButtonB))
@@ -117,6 +123,8 @@ void mainMenu() {
 
   if(ShowStatus){
     ShowCalendar();
+=======
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   }
 }
 
@@ -153,7 +161,11 @@ void setting() {
 
   if ((millis() - prevSetCursor) > 50) {
     prevSetCursor = millis();
+<<<<<<< HEAD
     i < 4 ? i++ : i = 0;
+=======
+    i < 6 ? i++ : i = 0;
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   }
 
   display.setTextColor(WHITE);
@@ -165,6 +177,7 @@ void setting() {
     display.setCursor(95 + i, 18);
     display.cp437(true);
     display.write(0x10);
+<<<<<<< HEAD
   } else {
     if (selectedOption == 1) {
       display.setCursor(36, 40);
@@ -224,6 +237,41 @@ void SettingMenu() {
   display.fillRect(26, 10, 76, 11, WHITE);
   display.setCursor(48, 12);
 
+=======
+  }else{
+    display.setCursor(36, 37);
+    display.print("Count Down");
+    sercorTriangleDown(66, 50 + i);
+  }
+  
+  if (setOn) {
+    SettingMenu();
+    if (Deboundce(ButtonA)) {
+      if (selectedOption == 1) {
+        setOn = false;
+      }
+      if (selectedOption == 2) {
+        // ESP.restart();  //jmp 0
+        setOn = false;
+        gameMode = 0;
+        selectedOption = 1;
+      }
+    }
+  }
+
+  if (Deboundce(ButtonM)) {
+    setOn = true;
+  }  
+}
+
+void SettingMenu() {
+  display.fillRect(24, 8, 80, 45, WHITE);
+  display.fillRect(25, 9, 78, 43, BLACK);
+  display.setTextColor(BLACK);
+  display.fillRect(26, 10, 76, 11, WHITE);
+  display.setCursor(48, 12);
+
+>>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   display.print("WANNING");
   display.setTextColor(WHITE);
 
