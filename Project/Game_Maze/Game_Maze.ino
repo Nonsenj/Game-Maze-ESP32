@@ -3,8 +3,19 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SH1106.h>
 #include <RTClib.h>
+#include <Preferences.h>
 #include "DHT.h"
 
+#include <WiFi.h>
+#include <HTTPClient.h>
+
+const char* ssid = "JUST BELIEVE_2.4G";
+const char* password = "0954185973";
+
+const char* serverName = "http://192.168.1.148/post-esp-data.php";
+
+//api need to match with post-esp-data.php file on raspi
+String apiKeyValue = "tPmAT5Ab3j7F9";
 
 #define OLED_SDA 21
 #define OLED_SCL 22
@@ -75,6 +86,7 @@ const unsigned char Title[] PROGMEM = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
 };
 
+Preferences preferences;
 #define ACTIVATED LOW
 #define MAZEHEIGHT 31
 #define MAZEWIDTH 15
@@ -84,39 +96,44 @@ const unsigned char Title[] PROGMEM = {
 
 #define DHTPIN 4
 #define DHTTYPE DHT11
-DHT dht(DHTPIN, DHTTYPE) ;
+DHT dht(DHTPIN, DHTTYPE);
 
-float h = dht.readHumidity();
-float t = dht.readTemperature();
-float f = dht.readTemperature(true);
-
+float h;
+float t;
+float f;
 
 int selectedOption = 1;
+int Modegame;
 bool sound_enabled = true;
 
 unsigned long prevTimeblink = 0;
 unsigned long prevTimeSleep = 0;
+unsigned long prevSetCursor = 0;
 
 RTC_DATA_ATTR int gameMode = 0;
-RTC_DATA_ATTR int8_t posx=0, posy=2;
-int8_t blinkPlayer=1;
+RTC_DATA_ATTR int8_t posx = 0, posy = 2;
+int8_t blinkPlayer = 1;
 RTC_DATA_ATTR bool gamePause = true;
+RTC_DATA_ATTR bool setOn = false;
 
 int8_t illuminatedRow = 0;
 int8_t wallPhase = 1;
-RTC_DATA_ATTR int8_t level=1;
+RTC_DATA_ATTR int8_t level = 1;
 
 const int JoyStick_pin = 25;
 const int X_pin = 32;
 const int Y_pin = 33;
 
-hw_timer_t *My_timer = NULL;
+hw_timer_t* My_timer = NULL;
 RTC_DATA_ATTR uint8_t minute = 0;
 RTC_DATA_ATTR uint8_t second = 0;
 RTC_DATA_ATTR bool timerOn = false;
 RTC_DS1307 rtc;
 
-int score;
+RTC_DATA_ATTR int score;
+RTC_DATA_ATTR int totalScore;
+bool setSelect = false;
+String NameID;
 
 void IRAM_ATTR onTimer() {
   if (second == 59) {
@@ -125,6 +142,20 @@ void IRAM_ATTR onTimer() {
   } else {
     second++;
   }
+}
+
+void ReadDH11() {
+  h = dht.readHumidity();
+  t = dht.readTemperature();
+  f = dht.readTemperature(true);
+}
+
+void ReadEEprom() {
+  preferences.begin("Savegame", false);
+  totalScore = preferences.getUInt("totalScore", 0);
+  Modegame = preferences.getUInt("modegame", 1);
+  NameID = preferences.getString("username", "NONE");
+  preferences.end();
 }
 
 void displayWIFI(uint8_t font) {
@@ -144,7 +175,7 @@ void displayClock(uint8_t font) {
   display.print(now.minute());
 }
 
-void readHTF(){
+void readHTF() {
   h = dht.readHumidity();
   t = dht.readTemperature();
   f = dht.readTemperature(true);
@@ -219,10 +250,12 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
-  if (! rtc.begin()) {
+  WiFi.begin(ssid, password);
+  if (!rtc.begin()) {
     Serial.println("RTC module is NOT found");
     Serial.flush();
-    while (1);
+    while (1)
+      ;
   }
   My_timer = timerBegin(0, 80, true);
   timerAttachInterrupt(My_timer, &onTimer, true);
@@ -243,9 +276,69 @@ void setup() {
   delay(3000);
 
   display.clearDisplay();
+
+  //  preferences.begin("Savegame", false);
+  //  preferences.putUInt("totalScore",totalScore);
+  //  preferences.putUInt("modegame",Mod egame);
+  //  preferences.putString("username",NameID);
+  //  preferences.end();
+  ReadEEprom();
 }
 
 void loop() {
+  // Serial.print("totalScore: ");
+  // Serial.print(totalScore);
+  // Serial.print("Modegame: ");
+  // Serial.print(Modegame);
+  // Serial.print("NameID: ");
+  // Serial.println(NameID);
+  // if(WiFi.status()== WL_CONNECTED){
+  //   WiFiClient client;
+  //   HTTPClient http;
+
+  //   // Your Domain name with URL path or IP address with path
+  //   http.begin(client, serverName);
+
+  //   // Specify content-type header
+  //   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+  //   // Prepare your HTTP POST request data
+  //   String httpRequestData = "api_key=" + apiKeyValue + "&name=" + NameID
+  //                         + "&value1=" + String(Modegame)
+  //                         + "&value2=" + String(totalScore) + "";
+  //   Serial.print("httpRequestData: ");
+  //   Serial.println(httpRequestData);
+
+  //   // You can comment the httpRequestData variable above
+  //   // then, use the httpRequestData variable below (for testing purposes without the BME280 sensor)
+  //   //String httpRequestData = "api_key=tPmAT5Ab3j7F9&sensor=BME280&location=Office&value1=24.75&value2=49.54&value3=1005.14";
+
+  //   // Send HTTP POST request
+  //   int httpResponseCode = http.POST(httpRequestData);
+
+  //   // If you need an HTTP request with a content type: text/plain
+  //   //http.addHeader("Content-Type", "text/plain");
+  //   //int httpResponseCode = http.POST("Hello, World!");
+
+  //   // If you need an HTTP request with a content type: application/json, use the following:
+  //   //http.addHeader("Content-Type", "application/json");
+  //   //int httpResponseCode = http.POST("{\"value1\":\"19\",\"value2\":\"67\",\"value3\":\"78\"}");
+
+  //   if (httpResponseCode>0) {
+  //     Serial.print("HTTP Response code: ");
+  //     Serial.println(httpResponseCode);
+  //   }
+  //   else {
+  //     Serial.print("Error code: ");
+  //     Serial.println(httpResponseCode);
+  //   }
+  //   // Free resources
+  //   http.end();
+  // }
+  // else {
+  //   Serial.println("WiFi Disconnected");
+  // }
+
   readHTF();
   display.clearDisplay();
   if (gameMode == 0) {
@@ -254,23 +347,25 @@ void loop() {
     displayClock(WHITE);
   }
 
-  if(gameMode == 1){
+  if (gameMode == 1) {
     Game();
     controller();
   }
 
-  if(gameMode == 2){
+  if (gameMode == 2) {
     setting();
     controller();
   }
 
-  displayBattery(WHITE);
-  displayIndicators(WHITE);
+  if (!gameMode) {
+    displayBattery(WHITE);
+    displayIndicators(WHITE);
+  }
   // displayWIFI(WHITE);
 
   display.display();
 
-  if ((millis()- prevTimeSleep) > 60000 && gamePause) {
+  if ((millis() - prevTimeSleep) > 60000 && gamePause) {
     prevTimeSleep = millis();
     timerDetachInterrupt(My_timer);
     Serial.println("Going to sleep now");

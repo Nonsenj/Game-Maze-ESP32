@@ -54,7 +54,7 @@ void controller() {
   // Serial.println(state);
 
   if (gamePause) {
-    if (state == 'D' || state == 'U' || state == 'L' || state == 'R') {
+    if (state == 'D' || state == 'U' || state == 'L' || state == 'R' || ButtonA == false || ButtonB == false || ButtonM == false) {
       prevTimeSleep = millis();
     }
     
