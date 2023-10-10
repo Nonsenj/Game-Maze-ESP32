@@ -155,5 +155,7 @@ void displayLevel() {
   }
   delay(1500);
   display.setTextSize(1);
-  generateMaze();
+  if(Modegame != 2){
+    generateMaze();
+  }
 }

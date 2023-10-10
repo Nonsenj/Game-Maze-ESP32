@@ -1,10 +1,5 @@
 bool sec = false;
-<<<<<<< HEAD
 bool ShowStatus = false;
-=======
-bool setstateone = true;
-bool setstatetwo = false;
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
 int i;
 
 void sercorTriangleDown(uint8_t x, uint8_t y) {
@@ -68,18 +63,35 @@ void ShowCalendar() {
   display.fillCircle(39, 15, 3, BLACK);
   display.fillCircle(64, 15, 3, BLACK);
   display.fillCircle(89, 15, 3, BLACK);
-  display.setCursor(45, 28);
+  if(daysOfWeek[calendernow.dayOfTheWeek()] == "Th" || daysOfWeek[calendernow.dayOfTheWeek()] == "Sa"){
+    display.setCursor(39, 28);
+  }else{
+    display.setCursor(45, 28);
+  }
   display.setTextColor(BLACK);
   display.setTextSize(2);
   display.print(daysOfWeek[calendernow.dayOfTheWeek()]);
   display.setCursor(66, 28);
-  display.print(calendernow.day());
   display.setCursor(41, 46);
   display.setTextSize(1);
   display.print(Month[calendernow.month()]);
   Serial.print(calendernow.month());
   display.setCursor(66, 46);
   display.print(calendernow.year());
+}
+
+void Showtemp(){
+  ReadDH11();
+  display.fillRect(32, 10, 64, 48, WHITE);
+  display.setTextColor(BLACK);
+  display.cp437(true);
+  display.setTextSize(1);
+  display.setCursor(43, 46);
+  display.print(h);
+  display.write(0x25);
+  display.setCursor(71, 46);
+  display.print(t);
+  display.write(0xF8);
 }
 
 void mainMenu() {
@@ -115,16 +127,14 @@ void mainMenu() {
     }
 
     selectedOption = 1;
-<<<<<<< HEAD
   }
 
-  if(Deboundce(ButtonB))
-  ShowStatus = !ShowStatus;
-
-  if(ShowStatus){
+  if (Deboundce(ButtonB)){
+    ShowStatus = !ShowStatus;
+  }
+  
+  if (ShowStatus) {
     ShowCalendar();
-=======
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   }
 }
 
@@ -161,11 +171,7 @@ void setting() {
 
   if ((millis() - prevSetCursor) > 50) {
     prevSetCursor = millis();
-<<<<<<< HEAD
     i < 4 ? i++ : i = 0;
-=======
-    i < 6 ? i++ : i = 0;
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   }
 
   display.setTextColor(WHITE);
@@ -177,7 +183,6 @@ void setting() {
     display.setCursor(95 + i, 18);
     display.cp437(true);
     display.write(0x10);
-<<<<<<< HEAD
   } else {
     if (selectedOption == 1) {
       display.setCursor(36, 40);
@@ -196,12 +201,12 @@ void setting() {
     if (Deboundce(ButtonA)) {
       if (selectedOption == 1) {
         setOn = false;
+        preferences.begin("Savegame", false);
+        preferences.putUInt("modegame", Modegame);
+        preferences.end();
       }
       if (selectedOption == 2) {
-        // ESP.restart();  //jmp 0
-        setOn = false;
-        gameMode = 0;
-        selectedOption = 1;
+        ESP.restart();  //jmp 0
       }
     }
   }
@@ -211,12 +216,12 @@ void setting() {
   }
   if (Deboundce(ButtonA)) {
     setSelect = !setSelect;
-    
+
     if (setSelect == false) {
-      if(selectedOption == 1){
+      if (selectedOption == 1) {
         Modegame = 1;
       }
-      if(selectedOption == 2){
+      if (selectedOption == 2) {
         Modegame = 2;
       }
       selectedOption = 1;
@@ -226,6 +231,7 @@ void setting() {
 
   if (Deboundce(ButtonB)) {
     setSelect = false;
+    setOn = false;
   }
   // Serial.println(Modegame);
 }
@@ -235,55 +241,20 @@ void SettingMenu() {
   display.fillRect(25, 9, 78, 43, BLACK);
   display.setTextColor(BLACK);
   display.fillRect(26, 10, 76, 11, WHITE);
-  display.setCursor(48, 12);
+  display.setCursor(45, 12);
 
-=======
-  }else{
-    display.setCursor(36, 37);
-    display.print("Count Down");
-    sercorTriangleDown(66, 50 + i);
-  }
-  
-  if (setOn) {
-    SettingMenu();
-    if (Deboundce(ButtonA)) {
-      if (selectedOption == 1) {
-        setOn = false;
-      }
-      if (selectedOption == 2) {
-        // ESP.restart();  //jmp 0
-        setOn = false;
-        gameMode = 0;
-        selectedOption = 1;
-      }
-    }
-  }
-
-  if (Deboundce(ButtonM)) {
-    setOn = true;
-  }  
-}
-
-void SettingMenu() {
-  display.fillRect(24, 8, 80, 45, WHITE);
-  display.fillRect(25, 9, 78, 43, BLACK);
-  display.setTextColor(BLACK);
-  display.fillRect(26, 10, 76, 11, WHITE);
-  display.setCursor(48, 12);
-
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   display.print("WANNING");
   display.setTextColor(WHITE);
 
-  display.setCursor(48, 24);
+  display.setCursor(55, 24);
   display.print("SAVE");
   if (selectedOption == 1) {
-    cursor_Blink(33, 24);
+    cursor_Blink(40, 24);
   }
 
-  display.setCursor(48, 34);
+  display.setCursor(55, 34);
   display.print("QUIT");
   if (selectedOption == 2) {
-    cursor_Blink(33, 34);
+    cursor_Blink(40, 34);
   }
 }

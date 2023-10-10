@@ -44,6 +44,7 @@ void Game() {
           gamePause = true;
           gameMode = 0;
           selectedOption = 1;
+          SendData();
           preferences.begin("Savegame", false);
           preferences.putUInt("totalScore",totalScore);
           preferences.end();

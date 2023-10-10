@@ -12,7 +12,7 @@
 const char* ssid = "JUST BELIEVE_2.4G";
 const char* password = "0954185973";
 
-const char* serverName = "http://192.168.1.148/post-esp-data.php";
+const char* serverName = "http://192.168.1.240/esp-data.php";
 
 //api need to match with post-esp-data.php file on raspi
 String apiKeyValue = "tPmAT5Ab3j7F9";
@@ -97,13 +97,6 @@ Preferences preferences;
 #define DHTPIN 4
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
-<<<<<<< HEAD
-=======
-
-float h = dht.readHumidity();
-float t = dht.readTemperature();
-float f = dht.readTemperature(true);
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
 
 float h;
 float t;
@@ -151,7 +144,36 @@ void IRAM_ATTR onTimer() {
   }
 }
 
-<<<<<<< HEAD
+void SendData(){
+  if(WiFi.status()== WL_CONNECTED){
+    WiFiClient client;
+    HTTPClient http;
+
+    // Your Domain name with URL path or IP address with path
+    http.begin(client, serverName);
+
+    // Specify content-type header
+    http.addHeader("Content-Type", "application/x-www-form-urlencoded");
+
+    // Prepare your HTTP POST request data
+    String httpRequestData = "api_key=" + apiKeyValue + "&name=" + NameID
+                          + "&value1=" + String(Modegame)
+                          + "&value2=" + String(totalScore) + "";
+
+
+    // Send HTTP POST request
+    int httpResponseCode = http.POST(httpRequestData);
+
+    // Free resources
+    http.end();
+    Serial.println("SendData");
+  }
+  else {
+    Serial.println("WiFi Disconnected");
+  }
+
+}
+
 void ReadDH11() {
   h = dht.readHumidity();
   t = dht.readTemperature();
@@ -163,13 +185,6 @@ void ReadEEprom() {
   totalScore = preferences.getUInt("totalScore", 0);
   Modegame = preferences.getUInt("modegame", 1);
   NameID = preferences.getString("username", "NONE");
-=======
-void ReadEEprom(){
-  preferences.begin("Savegame", false);
-  totalScore = preferences.getUInt("totalScore",0);
-  Modegame = preferences.getUInt("modegame",1);
-  NameID = preferences.getString("username","NONE");
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   preferences.end();
 }
 
@@ -182,12 +197,14 @@ void displayWIFI(uint8_t font) {
 
 void displayClock(uint8_t font) {
   DateTime now = rtc.now();
-  display.setCursor(0, 2);
+  display.setCursor(3, 2);
   display.setTextColor(font);
   display.setTextSize(1);
   display.print(now.hour());
   display.print(":");
-  display.print(now.minute());
+  display.print(now.minute() / 10);
+  display.print(now.minute() % 10);
+
 }
 
 void readHTF() {
@@ -265,10 +282,7 @@ int readVcc() {
 
 void setup() {
   Serial.begin(9600);
-<<<<<<< HEAD
   WiFi.begin(ssid, password);
-=======
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   if (!rtc.begin()) {
     Serial.println("RTC module is NOT found");
     Serial.flush();
@@ -294,88 +308,16 @@ void setup() {
   delay(3000);
 
   display.clearDisplay();
-<<<<<<< HEAD
 
   //  preferences.begin("Savegame", false);
   //  preferences.putUInt("totalScore",totalScore);
   //  preferences.putUInt("modegame",Mod egame);
   //  preferences.putString("username",NameID);
   //  preferences.end();
-=======
-  
-//  preferences.begin("Savegame", false);
-//  preferences.putUInt("totalScore",totalScore);
-//  preferences.putUInt("modegame",Modegame);
-//  preferences.putString("username",NameID);
-//  preferences.end();
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
   ReadEEprom();
 }
 
 void loop() {
-<<<<<<< HEAD
-  // Serial.print("totalScore: ");
-  // Serial.print(totalScore);
-  // Serial.print("Modegame: ");
-  // Serial.print(Modegame);
-  // Serial.print("NameID: ");
-  // Serial.println(NameID);
-  // if(WiFi.status()== WL_CONNECTED){
-  //   WiFiClient client;
-  //   HTTPClient http;
-
-  //   // Your Domain name with URL path or IP address with path
-  //   http.begin(client, serverName);
-
-  //   // Specify content-type header
-  //   http.addHeader("Content-Type", "application/x-www-form-urlencoded");
-
-  //   // Prepare your HTTP POST request data
-  //   String httpRequestData = "api_key=" + apiKeyValue + "&name=" + NameID
-  //                         + "&value1=" + String(Modegame)
-  //                         + "&value2=" + String(totalScore) + "";
-  //   Serial.print("httpRequestData: ");
-  //   Serial.println(httpRequestData);
-
-  //   // You can comment the httpRequestData variable above
-  //   // then, use the httpRequestData variable below (for testing purposes without the BME280 sensor)
-  //   //String httpRequestData = "api_key=tPmAT5Ab3j7F9&sensor=BME280&location=Office&value1=24.75&value2=49.54&value3=1005.14";
-
-  //   // Send HTTP POST request
-  //   int httpResponseCode = http.POST(httpRequestData);
-
-  //   // If you need an HTTP request with a content type: text/plain
-  //   //http.addHeader("Content-Type", "text/plain");
-  //   //int httpResponseCode = http.POST("Hello, World!");
-
-  //   // If you need an HTTP request with a content type: application/json, use the following:
-  //   //http.addHeader("Content-Type", "application/json");
-  //   //int httpResponseCode = http.POST("{\"value1\":\"19\",\"value2\":\"67\",\"value3\":\"78\"}");
-
-  //   if (httpResponseCode>0) {
-  //     Serial.print("HTTP Response code: ");
-  //     Serial.println(httpResponseCode);
-  //   }
-  //   else {
-  //     Serial.print("Error code: ");
-  //     Serial.println(httpResponseCode);
-  //   }
-  //   // Free resources
-  //   http.end();
-  // }
-  // else {
-  //   Serial.println("WiFi Disconnected");
-  // }
-
-=======
-  Serial.print("totalScore: ");
-  Serial.print(totalScore);
-  Serial.print("Modegame: ");
-  Serial.print(Modegame);
-  Serial.print("NameID: ");
-  Serial.println(NameID);
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
-  readHTF();
   display.clearDisplay();
   if (gameMode == 0) {
     mainMenu();
@@ -393,11 +335,7 @@ void loop() {
     controller();
   }
 
-<<<<<<< HEAD
   if (!gameMode) {
-=======
-  if(!gameMode) {
->>>>>>> 50c6b3dfad2794484115fbc902adc4e58af57dbb
     displayBattery(WHITE);
     displayIndicators(WHITE);
   }
