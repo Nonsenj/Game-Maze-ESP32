@@ -72,10 +72,11 @@ void ShowCalendar() {
   display.setTextSize(2);
   display.print(daysOfWeek[calendernow.dayOfTheWeek()]);
   display.setCursor(66, 28);
+  display.print(calendernow.day());
   display.setCursor(41, 46);
   display.setTextSize(1);
   display.print(Month[calendernow.month()]);
-  Serial.print(calendernow.month());
+  
   display.setCursor(66, 46);
   display.print(calendernow.year());
 }
@@ -116,6 +117,7 @@ void mainMenu() {
   display.setTextSize(1);
 
   if (Deboundce(ButtonA) or Deboundce(JoyStick_pin)) {
+    Speak(sound,NOTE_C4,1000 / 4);
     gameMode = selectedOption;
     if (Modegame == 1 && selectedOption == 1) {
       gamePause = false;
@@ -131,6 +133,7 @@ void mainMenu() {
 
   if (Deboundce(ButtonB)){
     ShowStatus = !ShowStatus;
+    Speak(sound,NOTE_G5,1000 / 4);
   }
   
   if (ShowStatus) {

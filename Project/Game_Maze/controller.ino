@@ -57,8 +57,9 @@ void controller() {
     if (state == 'D' || state == 'U' || state == 'L' || state == 'R' || ButtonA == false || ButtonB == false || ButtonM == false) {
       prevTimeSleep = millis();
     }
-    
+
     if (state == 'D') {
+      Speak(sound, 2200, 5);
       selectedOption++;
       if (selectedOption > 2) {
         selectedOption = 1;
@@ -68,6 +69,7 @@ void controller() {
     }
 
     if (state == 'U') {
+      Speak(sound, 2200, 5);
       selectedOption--;
       if (selectedOption < 1) {
         selectedOption = 2;
@@ -83,6 +85,9 @@ void controller() {
         wall = readPixel(posx - 1, posy);
         if (!wall) {
           --posx;
+          Speak(sound, 2200, 5);
+        } else {
+          Speak(sound, 1000, 50);
         }
       }
 
@@ -94,6 +99,9 @@ void controller() {
         wall = readPixel(posx + 1, posy);
         if (!wall) {
           ++posx;
+          Speak(sound, 2200, 5);
+        } else {
+          Speak(sound, 1000, 50);
         }
       }
 
@@ -105,6 +113,9 @@ void controller() {
         wall = readPixel(posx, posy - 1);
         if (!wall) {
           --posy;
+          Speak(sound, 2200, 5);
+        } else {
+          Speak(sound, 1000, 5);
         }
       }
 
@@ -116,7 +127,10 @@ void controller() {
         wall = readPixel(posx, posy + 1);
         if (!wall) {
           ++posy;
-        }
+          Speak(sound, 2200, 5);
+        }else{
+          Speak(sound, 2200, 5);
+          }
         state = 'S';
       }
     }

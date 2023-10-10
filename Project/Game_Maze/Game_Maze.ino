@@ -5,6 +5,7 @@
 #include <RTClib.h>
 #include <Preferences.h>
 #include "DHT.h"
+#include "pitches.h"
 
 #include <WiFi.h>
 #include <HTTPClient.h>
@@ -93,10 +94,12 @@ Preferences preferences;
 #define ButtonA 26
 #define ButtonB 27
 #define ButtonM 14
+#define sound 18
 
-#define DHTPIN 4
+#define DHTPIN 19
 #define DHTTYPE DHT11
 DHT dht(DHTPIN, DHTTYPE);
+
 
 float h;
 float t;
@@ -144,8 +147,8 @@ void IRAM_ATTR onTimer() {
   }
 }
 
-void SendData(){
-  if(WiFi.status()== WL_CONNECTED){
+void SendData() {
+  if (WiFi.status() == WL_CONNECTED) {
     WiFiClient client;
     HTTPClient http;
 
@@ -157,8 +160,8 @@ void SendData(){
 
     // Prepare your HTTP POST request data
     String httpRequestData = "api_key=" + apiKeyValue + "&name=" + NameID
-                          + "&value1=" + String(Modegame)
-                          + "&value2=" + String(totalScore) + "";
+                             + "&value1=" + String(Modegame)
+                             + "&value2=" + String(totalScore) + "";
 
 
     // Send HTTP POST request
@@ -172,6 +175,13 @@ void SendData(){
     Serial.println("WiFi Disconnected");
   }
 
+}
+
+void Speak(uint8_t pin, int note, int noteDuration) {
+  if (sound_enabled) {
+    tone(pin, note, noteDuration);
+    noTone(sound);
+  }
 }
 
 void ReadDH11() {
@@ -267,28 +277,16 @@ void displayBattery(uint8_t font) {
   }
 }
 
-void sound_tone(uint8_t pin, int freq, int duration) {
-  if (sound_enabled) {
-    tone(pin, freq, duration);
-  }
-}
-
 int readVcc() {
   float result;  // Read 1.1V reference against AVcc
   result = analogRead(25);
   return result;
 }
 
-
 void setup() {
   Serial.begin(9600);
   WiFi.begin(ssid, password);
-  if (!rtc.begin()) {
-    Serial.println("RTC module is NOT found");
-    Serial.flush();
-    while (1)
-      ;
-  }
+  rtc.begin();
   My_timer = timerBegin(0, 80, true);
   timerAttachInterrupt(My_timer, &onTimer, true);
   timerAlarmWrite(My_timer, 1000000, true);
@@ -309,15 +307,11 @@ void setup() {
 
   display.clearDisplay();
 
-  //  preferences.begin("Savegame", false);
-  //  preferences.putUInt("totalScore",totalScore);
-  //  preferences.putUInt("modegame",Mod egame);
-  //  preferences.putString("username",NameID);
-  //  preferences.end();
   ReadEEprom();
 }
 
 void loop() {
+
   display.clearDisplay();
   if (gameMode == 0) {
     mainMenu();
