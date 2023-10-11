@@ -45,7 +45,9 @@ void Game() {
           gamePause = true;
           gameMode = 0;
           selectedOption = 1;
-          
+          preferences.begin("Savegame", false);
+          pertotalScore = preferences.getUInt("totalScore", 0);
+          preferences.end();
           if (totalScore != pertotalScore) {
             SendData();
             preferences.begin("Savegame", false);

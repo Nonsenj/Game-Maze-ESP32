@@ -77,6 +77,26 @@ void controller() {
       delay(30);
     }
 
+    if (state == 'L') {
+      Speak(sound, NOTE_E5, 30);
+      selectedOption--;
+      if (selectedOption < 1) {
+        selectedOption = 2;
+      }
+      state = 'S';
+      delay(30);
+    }
+
+    if (state == 'R') {
+      Speak(sound, NOTE_E5, 30);
+      selectedOption++;
+      if (selectedOption > 2) {
+        selectedOption = 1;
+      }
+      state = 'S';
+      delay(30);
+    }
+
 
   } else {
     if (state == 'L') {

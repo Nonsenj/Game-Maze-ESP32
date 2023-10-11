@@ -286,7 +286,6 @@ int readVcc() {
 }
 
 void setup() {
-  Serial.begin(9600);
   WiFi.begin(ssid, password);
   rtc.begin();
   dht.begin();  
@@ -315,7 +314,6 @@ void setup() {
 }
 
 void loop() {
-
   display.clearDisplay();
   if (gameMode == 0) {
     mainMenu();
