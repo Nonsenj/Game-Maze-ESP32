@@ -99,8 +99,10 @@ void displayLevel() {
     Randomscore = random(100);
     display.print(Randomscore);
     display.display();
+    Speak(sound, NOTE_D7, 1000/4);
     delay(500);
   }
+
 
   for (int i = 0; i < 6; i++) {
     display.clearDisplay();
@@ -129,6 +131,7 @@ void displayLevel() {
     Bigstar(52-i, 43+i, font);
     bitstar(48-i, 42+i, (font == WHITE) ? font = BLACK:font = WHITE);
     display.display();
+    Speak(sound, NOTE_G7, 1000/12);
     delay(24);
   }
   delay(2000);
@@ -154,6 +157,7 @@ void displayLevel() {
     }
   }
   delay(1500);
+
   display.setTextSize(1);
   if(Modegame != 2){
     generateMaze();

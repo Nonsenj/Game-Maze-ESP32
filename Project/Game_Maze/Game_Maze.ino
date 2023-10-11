@@ -10,8 +10,8 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
 
-const char* ssid = "JUST BELIEVE_2.4G";
-const char* password = "0954185973";
+const char* ssid = "Nonsense";
+const char* password = "00000000";
 
 const char* serverName = "http://justbelieve.thddns.net:7330/post-esp-data.php";
 
@@ -94,7 +94,7 @@ Preferences preferences;
 #define ButtonA 26
 #define ButtonB 27
 #define ButtonM 14
-#define sound 18
+#define sound 15
 
 #define DHTPIN 19
 #define DHTTYPE DHT11
@@ -135,6 +135,7 @@ RTC_DS1307 rtc;
 
 RTC_DATA_ATTR int score;
 RTC_DATA_ATTR int totalScore;
+int pertotalScore;
 bool setSelect = false;
 String NameID;
 
@@ -195,6 +196,7 @@ void ReadEEprom() {
   totalScore = preferences.getUInt("totalScore", 0);
   Modegame = preferences.getUInt("modegame", 1);
   NameID = preferences.getString("username", "NONE");
+  pertotalScore = preferences.getUInt("totalScore", 0);
   preferences.end();
 }
 
@@ -287,6 +289,7 @@ void setup() {
   Serial.begin(9600);
   WiFi.begin(ssid, password);
   rtc.begin();
+  dht.begin();  
   My_timer = timerBegin(0, 80, true);
   timerAttachInterrupt(My_timer, &onTimer, true);
   timerAlarmWrite(My_timer, 1000000, true);
@@ -294,6 +297,7 @@ void setup() {
   pinMode(ButtonA, INPUT_PULLUP);
   pinMode(ButtonB, INPUT_PULLUP);
   pinMode(ButtonM, INPUT_PULLUP);
+
   esp_sleep_enable_ext0_wakeup(GPIO_NUM_14, 0);
   display.begin(SH1106_SWITCHCAPVCC, 0x3C);
   display.clearDisplay();
@@ -329,11 +333,14 @@ void loop() {
     controller();
   }
 
-  if (!gameMode) {
+  if (gameMode != 2) {
     displayBattery(WHITE);
     displayIndicators(WHITE);
   }
-  // displayWIFI(WHITE);
+  
+  if(WiFi.status()== WL_CONNECTED){
+    displayWIFI(WHITE);
+  }
 
   display.display();
 

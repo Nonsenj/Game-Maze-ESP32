@@ -1,6 +1,7 @@
 bool sec = false;
 bool ShowStatus = false;
 int i;
+int Showoption;
 
 void sercorTriangleDown(uint8_t x, uint8_t y) {
   display.fillTriangle(x, y, x - 3, y - 3, x + 3, y - 3, WHITE);
@@ -63,9 +64,9 @@ void ShowCalendar() {
   display.fillCircle(39, 15, 3, BLACK);
   display.fillCircle(64, 15, 3, BLACK);
   display.fillCircle(89, 15, 3, BLACK);
-  if(daysOfWeek[calendernow.dayOfTheWeek()] == "Th" || daysOfWeek[calendernow.dayOfTheWeek()] == "Sa"){
+  if (daysOfWeek[calendernow.dayOfTheWeek()] == daysOfWeek[4] || daysOfWeek[calendernow.dayOfTheWeek()] == daysOfWeek[6]) {
     display.setCursor(39, 28);
-  }else{
+  } else {
     display.setCursor(45, 28);
   }
   display.setTextColor(BLACK);
@@ -76,23 +77,24 @@ void ShowCalendar() {
   display.setCursor(41, 46);
   display.setTextSize(1);
   display.print(Month[calendernow.month()]);
-  
+
   display.setCursor(66, 46);
   display.print(calendernow.year());
 }
 
-void Showtemp(){
+void Showtemp() {
   ReadDH11();
   display.fillRect(32, 10, 64, 48, WHITE);
   display.setTextColor(BLACK);
   display.cp437(true);
   display.setTextSize(1);
-  display.setCursor(43, 46);
+  display.setCursor(48, 22);
   display.print(h);
   display.write(0x25);
-  display.setCursor(71, 46);
+  display.setCursor(48, 38);
   display.print(t);
   display.write(0xF8);
+  display.setTextSize(1);
 }
 
 void mainMenu() {
@@ -117,7 +119,7 @@ void mainMenu() {
   display.setTextSize(1);
 
   if (Deboundce(ButtonA) or Deboundce(JoyStick_pin)) {
-    Speak(sound,NOTE_C4,1000 / 4);
+    Speak(sound, NOTE_D5, 50);
     gameMode = selectedOption;
     if (Modegame == 1 && selectedOption == 1) {
       gamePause = false;
@@ -127,17 +129,32 @@ void mainMenu() {
     if (Modegame == 2 && selectedOption == 1) {
       gamePause = false;
     }
-
     selectedOption = 1;
   }
 
-  if (Deboundce(ButtonB)){
+  if (Deboundce(ButtonB)) {
     ShowStatus = !ShowStatus;
-    Speak(sound,NOTE_G5,1000 / 4);
+    if (ShowStatus) {
+      Speak(sound, NOTE_D5, 50);
+    } else {
+      Speak(sound, NOTE_E2, 50);
+    }
   }
-  
+
+  if (Deboundce(ButtonM)) {
+    if (ShowStatus) {
+      Showoption < 1 ? Showoption++ : Showoption = 0;
+      Speak(sound, NOTE_D7, 50);
+    }else{
+      Speak(sound, NOTE_E2, 50);
+    }
+  }
+
   if (ShowStatus) {
-    ShowCalendar();
+    switch (Showoption) {
+      case 0: ShowCalendar(); break;
+      case 1: Showtemp(); break;
+    }
   }
 }
 
@@ -202,6 +219,7 @@ void setting() {
   if (setOn) {
     SettingMenu();
     if (Deboundce(ButtonA)) {
+      Speak(sound, NOTE_D5, 50);
       if (selectedOption == 1) {
         setOn = false;
         preferences.begin("Savegame", false);
@@ -215,9 +233,12 @@ void setting() {
   }
 
   if (Deboundce(ButtonM)) {
+    Speak(sound, NOTE_D5, 50);
     setOn = true;
   }
+
   if (Deboundce(ButtonA)) {
+    Speak(sound, NOTE_D5, 50);
     setSelect = !setSelect;
 
     if (setSelect == false) {
@@ -228,15 +249,14 @@ void setting() {
         Modegame = 2;
       }
       selectedOption = 1;
-      Serial.println(Modegame);
     }
   }
 
   if (Deboundce(ButtonB)) {
+    Speak(sound, NOTE_E2, 50);
     setSelect = false;
     setOn = false;
   }
-  // Serial.println(Modegame);
 }
 
 void SettingMenu() {

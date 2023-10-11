@@ -51,15 +51,14 @@ void controller() {
     prevTimeButton = millis();
     ReadJoy();
   }
-  // Serial.println(state);
 
   if (gamePause) {
-    if (state == 'D' || state == 'U' || state == 'L' || state == 'R' || ButtonA == false || ButtonB == false || ButtonM == false) {
+    if (state == 'D' || state == 'U' || state == 'L' || state == 'R' || Deboundce(ButtonA) || Deboundce(ButtonB) || Deboundce(ButtonM)) {
       prevTimeSleep = millis();
     }
 
     if (state == 'D') {
-      Speak(sound, 2200, 5);
+      Speak(sound, NOTE_E5, 30);
       selectedOption++;
       if (selectedOption > 2) {
         selectedOption = 1;
@@ -69,7 +68,7 @@ void controller() {
     }
 
     if (state == 'U') {
-      Speak(sound, 2200, 5);
+      Speak(sound, NOTE_E5, 30);
       selectedOption--;
       if (selectedOption < 1) {
         selectedOption = 2;
@@ -115,7 +114,8 @@ void controller() {
           --posy;
           Speak(sound, 2200, 5);
         } else {
-          Speak(sound, 1000, 5);
+          Speak(sound, 1000, 50);
+          Serial.println("WallU");
         }
       }
 
@@ -128,9 +128,10 @@ void controller() {
         if (!wall) {
           ++posy;
           Speak(sound, 2200, 5);
-        }else{
-          Speak(sound, 2200, 5);
-          }
+        } else {
+          Speak(sound, 1000, 50);
+          Serial.println("WallD");
+        }
         state = 'S';
       }
     }

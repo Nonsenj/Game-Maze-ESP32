@@ -36,6 +36,7 @@ void Game() {
     if (gamePause) {
       gameMenu();
       if (Deboundce(ButtonA)) {
+        Speak(sound, NOTE_D5, 50);
         if (selectedOption == 1) {
           gamePause = false;
         }
@@ -44,10 +45,13 @@ void Game() {
           gamePause = true;
           gameMode = 0;
           selectedOption = 1;
-          SendData();
-          preferences.begin("Savegame", false);
-          preferences.putUInt("totalScore",totalScore);
-          preferences.end();
+          
+          if (totalScore != pertotalScore) {
+            SendData();
+            preferences.begin("Savegame", false);
+            preferences.putUInt("totalScore", totalScore);
+            preferences.end();
+          }
         }
       }
     }
@@ -61,6 +65,7 @@ void Game() {
     }
 
     if (Deboundce(ButtonM)) {
+      Speak(sound, NOTE_D5, 50);
       gamePause = true;
       if (timerOn) {
         timerAlarmDisable(My_timer);
@@ -68,5 +73,4 @@ void Game() {
       }
     }
   }
-
 }
