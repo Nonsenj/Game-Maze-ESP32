@@ -13,7 +13,7 @@
 const char* ssid = "JUST BELIEVE_2.4G";
 const char* password = "0954185973";
 
-const char* serverName = "http://192.168.1.240/esp-data.php";
+const char* serverName = "http://justbelieve.thddns.net:7330/post-esp-data.php";
 
 //api need to match with post-esp-data.php file on raspi
 String apiKeyValue = "tPmAT5Ab3j7F9";
